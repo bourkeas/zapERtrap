@@ -1,8 +1,9 @@
-maxproj_time = max(aa.cleanedcargomask, [], [3]) %make a max projection (in the time dimension) of the surface signal from the cleanedcargomask
-newhh = repmat(maxproj_time, [1 1 size(aa.surfaceCargo.image, 3)]); %repmat makes hh the same dimensions of aa.surfaceCargo.image
+maxproj_intime = max(aa.cleanedcargomask, [], [3]) %make a max projection (in the time dimension) of the surface signal from the cleanedcargomask
+resize_maxproj_intime = repmat(maxproj_intime, [1 1 size(aa.surfaceCargo.image, 3)]); %repmat makes maxproj_time the same dimensions of aa.surfaceCargo.image
 aa.makeBackgroundSubSurfaceCargoImage(); %this line calls the function (which can be found in AshleyAnalysis)
-zz = aa.surfaceCargo.bgsub_image.*newhh; %calculate the bg-subtracted raw intensities at each time point in the regions marked by the cleanedcargomask
-summed_fluorescence = squeeze(single(sum(zz,[],[1 2]))) %sum the fluorescence intensities of all regions at each time point
+dipshow(aa.surfaceCargo.bgsub_image) %look at the bg-subtracted surface cargo image
+fluorescence_eachregion = aa.surfaceCargo.bgsub_image.*resize_maxproj_intime; %calculate the bg-subtracted raw intensities at each time point in each region marked by the cleanedcargomask
+summed_fluorescence = squeeze(single(sum(fluorescence_eachregion,[],[1 2]))) %sum the fluorescence intensities of all regions at each time point
 
 figure; plot(summed_fluorescence./mean(summed_fluorescence(1:9))) %divide the fluorescence at each time point by the mean baseline fluorescence (F0)
 FoverF0 = summed_fluorescence./mean(summed_fluorescence(1:9))
